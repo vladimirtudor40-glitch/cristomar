@@ -199,7 +199,7 @@
     font-family:var(--f-mono);font-size:.66rem;letter-spacing:.22em;color:var(--muted);
   }
   .postcard .stamp{
-    position:absolute;top:-16px;right:-14px;width:74px;height:74px;border-radius:50%;
+    position:absolute;top:-16px;right:-14px;width:74px;height:74px;border-radius:50%;z-index:2;
     background:var(--plum);color:var(--paper);display:grid;place-items:center;text-align:center;
     font-family:var(--f-mono);font-size:.54rem;letter-spacing:.14em;line-height:1.35;text-transform:uppercase;
     box-shadow:0 8px 18px -8px rgba(110,47,77,.8);transform:rotate(8deg);border:2px solid var(--paper);
@@ -350,6 +350,52 @@
   }
   .lang-btn:hover{color:var(--plum);border-color:var(--plum);background:rgba(247,240,231,.85)}
 
+  /* hamburger */
+  .nav-burger{
+    display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    width:44px;height:44px;border-radius:8px;cursor:pointer;
+    border:1px solid rgba(36,24,38,.28);background:rgba(247,240,231,.5);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    transition:border-color .2s ease,background .2s ease;
+  }
+  .nav-burger:hover{border-color:var(--plum)}
+  .nav-burger span{display:block;width:18px;height:2px;border-radius:1px;background:var(--ink);transition:transform .3s ease,opacity .3s ease}
+  .nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav-burger.open span:nth-child(2){opacity:0}
+  .nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  @media (prefers-reduced-motion:reduce){.nav-burger span{transition:none}}
+
+  /* mobile menu — the carte, served full page */
+  .mmenu{
+    position:fixed;inset:0;z-index:45;display:none;overflow-y:auto;
+    background:rgba(247,240,231,.96);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    padding:92px var(--gut) calc(110px + env(safe-area-inset-bottom));
+  }
+  .mmenu.open{display:block}
+  .js .mmenu.open .mm-item{animation:mmIn .45s cubic-bezier(.2,.7,.2,1) both}
+  .js .mmenu.open .mm-item:nth-child(2){animation-delay:.05s}
+  .js .mmenu.open .mm-item:nth-child(3){animation-delay:.1s}
+  .js .mmenu.open .mm-item:nth-child(4){animation-delay:.15s}
+  .js .mmenu.open .mm-item:nth-child(5){animation-delay:.2s}
+  .js .mmenu.open .mm-item:nth-child(6){animation-delay:.25s}
+  @keyframes mmIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.js .mmenu.open .mm-item{animation:none}}
+  .mm-item{
+    display:flex;align-items:baseline;gap:.6rem;text-decoration:none;
+    padding:1.05rem 0;min-height:52px;
+    border-bottom:1px solid var(--line-2);
+  }
+  .mm-item .dish{font-family:var(--f-display);font-size:clamp(1.5rem,6vw,1.9rem);color:var(--ink);line-height:1.05}
+  .mm-item .leader{flex:1;border-bottom:1.5px dotted var(--line);transform:translateY(-.35em);min-width:24px}
+  .mm-item .val{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--honey-deep)}
+  .mm-item:active .dish,.mm-item:hover .dish{color:var(--plum)}
+  .mm-foot{margin-top:1.8rem;display:flex;flex-direction:column;gap:1rem;align-items:flex-start}
+  .mm-foot .eyebrow{font-size:.66rem}
+  @media(max-width:860px){
+    .nav-burger{display:inline-flex}
+  }
+
   /* mobile bottom CTA bar — call & WhatsApp, always at hand */
   .cta-bar{
     position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;gap:10px;
@@ -421,6 +467,7 @@
     <a href="#galerie" data-i18n="nav.galerie">Galerie</a>
     <a href="#setting" data-i18n="nav.imprejurimi">Împrejurimi</a>
     <button class="lang-btn" id="langBtn" type="button" aria-label="Switch to English">EN</button>
+    <button class="nav-burger" id="navBurger" type="button" aria-label="Meniu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
     <a class="btn" href="tel:+40723381404">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
       <span data-i18n="nav.rezerva">Rezervă</span>
@@ -429,6 +476,25 @@
 </nav>
 
 <span id="top"></span>
+
+<!-- MOBILE MENU — the carte, full page -->
+<div class="mmenu" id="mobileMenu" aria-hidden="true">
+  <nav aria-label="Meniu principal">
+    <a class="mm-item" href="#welcome"><span class="dish" data-i18n="nav.casa">Casa</span><span class="leader"></span><span class="val" data-i18n="s1.no">Felul I</span></a>
+    <a class="mm-item" href="#rooms"><span class="dish" data-i18n="nav.camere">Camere</span><span class="leader"></span><span class="val" data-i18n="s2.no">Felul II</span></a>
+    <a class="mm-item" href="#table"><span class="dish" data-i18n="nav.masa">La masă</span><span class="leader"></span><span class="val" data-i18n="s3.no">Felul III</span></a>
+    <a class="mm-item" href="#galerie"><span class="dish" data-i18n="nav.galerie">Galerie</span><span class="leader"></span><span class="val">Album</span></a>
+    <a class="mm-item" href="#setting"><span class="dish" data-i18n="nav.imprejurimi">Împrejurimi</span><span class="leader"></span><span class="val" data-i18n="s4.no">Felul IV</span></a>
+    <a class="mm-item" href="#reserve"><span class="dish" data-i18n="nav.rezerva">Rezervă</span><span class="leader"></span><span class="val" data-i18n="m.nota">Nota</span></a>
+    <div class="mm-foot">
+      <span class="eyebrow">Pensiune · Bran · Carpați</span>
+      <a class="btn" href="tel:+40723381404">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg>
+        +40 723 381 404
+      </a>
+    </div>
+  </nav>
+</div>
 
 <!-- HERO -->
 <header class="hero">
@@ -962,7 +1028,7 @@
     'form.pers':'<option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option><option value="5">5 guests</option><option value="6+">6 or more</option>',
     'form.submit':'Send via WhatsApp','form.hint':'WhatsApp opens with your message ready.',
     'foot.line':'Breakfast included · 24-hour reception','foot.tag':'A table at the foot of the mountains.','foot.bottom':'Presentation site',
-    'cta.call':'Call now','cta.wa':'WhatsApp'
+    'cta.call':'Call now','cta.wa':'WhatsApp','m.nota':'The bill'
   };
   const I18N_PH = {'ph.nume':'Your name','ph.msg':'For example: we are coming with two children and would like the mountain-view room…'};
   const TITLE_EN = 'Pensiunea Cristomar · Bran — A table at the foot of the mountains';
@@ -994,6 +1060,25 @@
   }
   langBtn.addEventListener('click', () => setLang(currentLang === 'ro' ? 'en' : 'ro'));
   try { if (localStorage.getItem('cristomar-lang') === 'en') setLang('en'); } catch (e) {}
+
+  // ---------- hamburger menu ----------
+  const burger = document.getElementById('navBurger');
+  const mmenu = document.getElementById('mobileMenu');
+  function setMenu(open) {
+    burger.classList.toggle('open', open);
+    mmenu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    mmenu.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  burger.addEventListener('click', () => setMenu(!mmenu.classList.contains('open')));
+  mmenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && mmenu.classList.contains('open')) { setMenu(false); burger.focus(); }
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 860 && mmenu.classList.contains('open')) setMenu(false);
+  }, {passive: true});
 
   // ---------- gallery lightbox ----------
   const lb = document.getElementById('lb');
